@@ -2,6 +2,139 @@
 // Développé pour impressionner la cliente ! 🚀
 
 // ============================================================================
+// 0. CSS FALLBACK PROTECTION (SOLUTION ANTI-MODE SOMBRE)
+// ============================================================================
+function initCSSFallbackProtection() {
+    // Vérifier si Bootstrap s'est chargé correctement
+    setTimeout(() => {
+        const testElement = document.createElement('div');
+        testElement.className = 'container';
+        testElement.style.position = 'absolute';
+        testElement.style.left = '-9999px';
+        document.body.appendChild(testElement);
+        
+        const containerWidth = window.getComputedStyle(testElement).maxWidth;
+        document.body.removeChild(testElement);
+        
+        // Si Bootstrap ne s'est pas chargé (pas de max-width sur .container)
+        if (containerWidth === 'none' || containerWidth === '0px') {
+            console.warn('⚠️ Bootstrap CSS failed to load - Applying fallback styles');
+            applyFallbackCSS();
+        }
+        
+        // Vérifier aussi les couleurs d'arrière-plan
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        if (bodyBg === 'rgb(0, 0, 0)' || bodyBg === 'black') {
+            console.warn('⚠️ Dark mode inversion detected - Applying color protection');
+            applyColorProtection();
+        }
+    }, 1000);
+}
+
+function applyFallbackCSS() {
+    const fallbackCSS = `
+        /* Fallback CSS si Bootstrap échoue */
+        body {
+            font-family: Arial, sans-serif !important;
+            background: linear-gradient(to bottom, #fff5f5, #ffffff) !important;
+            color: #333 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 15px !important;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1) !important;
+            color: white !important;
+            padding: 50px 0 !important;
+            text-align: center !important;
+            margin-bottom: 20px !important;
+        }
+        
+        header h1 {
+            font-size: 2.5rem !important;
+            margin-bottom: 10px !important;
+            color: white !important;
+        }
+        
+        .card {
+            background: white !important;
+            border-radius: 15px !important;
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            color: #333 !important;
+        }
+        
+        .contact-section {
+            background: #f8f9fa !important;
+            padding: 50px 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 15px !important;
+            color: #333 !important;
+        }
+        
+        a {
+            color: #ff6b6b !important;
+            text-decoration: none !important;
+        }
+        
+        a:hover {
+            color: #4ecdc4 !important;
+        }
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = fallbackCSS;
+    style.id = 'fallback-css';
+    document.head.appendChild(style);
+}
+
+function applyColorProtection() {
+    const protectionCSS = `
+        /* Protection contre l'inversion forcée */
+        * {
+            background-color: unset !important;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #fff5f5, #ffffff) !important;
+            color: #333 !important;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1) !important;
+            color: white !important;
+        }
+        
+        .card {
+            background: white !important;
+            color: #333 !important;
+        }
+        
+        .contact-section {
+            background: linear-gradient(135deg, #fff1f3, #f0f8ff, #f5fffa) !important;
+            color: #333 !important;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            color: white !important;
+        }
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = protectionCSS;
+    style.id = 'color-protection';
+    document.head.appendChild(style);
+}
+
+// ============================================================================
 // 1. LOADER D'ÉCRAN AVEC ANIMATION
 // ============================================================================
 function createLoader() {
@@ -572,6 +705,9 @@ function createStaticDaycareElements() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 École Privée Galado - Animations Premium Activées!');
     
+    // PROTECTION CSS EN PREMIER (Solution anti-mode sombre)
+    initCSSFallbackProtection();
+    
     // Lancer toutes les animations (sans éléments volants)
     createLoader();
     createStaticDecorations();
@@ -585,6 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
     createStaticDaycareElements();
     
     console.log('✨ Toutes les animations sont prêtes à impressionner la cliente!');
+    console.log('🛡️ Protection anti-mode sombre activée!');
 });
 
 // Suppression du cursor trail sur mobile pour les performances
